@@ -1,0 +1,5 @@
+*.pyc
+*.un*
+*.log
+*.sw*
+local_config.py

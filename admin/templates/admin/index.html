@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<link href="{{url_for('static', filename='css/admin.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <form id="run" method="POST">
+    <input type="text" class="input-xxlarge search-query" name="task" placeholder="fabric task" autofocus="true" value="{{task}}" />
+  </form>
+
+  {% if result_key %}
+  <div id="task-results" class="output"></div>
+  {% endif %}
+</div>
+
+<script type="text/javascript">
+  {% if result_key %}
+  var resultInterval;
+  function loadResults() {
+    $.getJSON("{{url_for('admin.task_results', job_id=job.id, key=result_key)}}", function(data){
+      $("div#task-results").html(data.results);
+      if (data.status == 'finished') {
+        clearInterval(resultInterval);
+      }
+    });
+  }
+  $(function(){
+    resultInterval = setInterval(loadResults, 500);
+  });
+  {% endif %}
+</script>
+
+{% endblock %}

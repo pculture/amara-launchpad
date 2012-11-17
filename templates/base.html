@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{config.get('APP_NAME')}}{% if title %}:: {{title}}{% endif %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- styles -->
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/bootstrap-responsive.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/app.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/ansi.css')}}" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+    
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.validate.min.js')}}"></script>
+    <!-- fav and touch icons -->
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.ico')}}">
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    <div id="messages" {% if not messages %}class="hide"{% endif %}>
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{category}}">
+            <a class="close" href="#" data-dismiss="alert">x</a>
+            <p>{{message}}<p>
+          </div>
+        {% endfor %}
+        <script type="text/javascript">
+          $(".alert").delay(5000).fadeOut();
+        </script>
+      {% endif %}
+    </div>
+    {% endwith %}
+    {% block root_content %}
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="{{url_for('admin.index')}}">{{config.APP_NAME}}</a>
+          {% if session.user %}
+          <ul class="nav pull-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {{session.user.username}}
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="{{url_for('accounts.change_password')}}">{{_('change password')}}</a></li>
+                <li><a href="{{url_for('accounts.logout')}}">{{_('logout')}}</a></li>
+              </ul>
+            </li>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="content container-fluid">
+    {% block content %}
+    {% endblock %}
+    </div>
+    {% endblock %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script type="text/javascript">
+      $(function(){
+        $("a[rel=tooltip]").tooltip();
+      });
+    </script>
+  </body>
+</html>
