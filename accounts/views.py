@@ -38,18 +38,25 @@ def login():
     ctx = {'username': username}
     return render_template('accounts/login.html', **ctx)
 
-@bp.route('/create/', methods=['POST'])
+@bp.route('/create/', methods=['GET', 'POST'])
 @admin_required
 def create():
-    form = request.form
-    username = form.get('username')
-    email = form.get('email')
-    if username and email:
-        db.create_user(username=username, email=email)
-        flash(messages.USER_CREATED, 'success')
-    else:
-        flash(messages.EMPTY_USERNAME_EMAIL, 'error')
-    return redirect(url_for('admin.index'))
+    if request.method == 'POST':
+        form = request.form
+        username = form.get('username')
+        email = form.get('email')
+        password = form.get('password')
+        admin = False
+        if form.has_key('admin'):
+            admin = True
+        if username and email:
+            db.create_user(username=username, email=email, password=password,
+               is_admin=admin)
+            flash(messages.USER_CREATED, 'success')
+        else:
+            flash(messages.EMPTY_USERNAME_EMAIL, 'error')
+        return redirect(url_for('admin.index'))
+    return render_template('accounts/new_user.html')
 
 @bp.route('/delete')
 @bp.route('/delete/<username>')

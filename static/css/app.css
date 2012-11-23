@@ -39,7 +39,7 @@ hide {
   padding-top: 10px;
   padding-bottom: 5px;
 }
-div#login, div#signup {
+div#login, div#signup, div#user {
   color: #8a8a8a;
   text-align: center;
   margin: 70px 0 0 0;

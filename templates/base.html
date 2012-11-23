@@ -54,6 +54,10 @@
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
+                {% if session.user.is_admin %}
+                <li><a href="{{url_for('accounts.create')}}">{{_('create user')}}</a></li>
+                <li class="divider"></li>
+                {% endif %}
                 <li><a href="{{url_for('accounts.change_password')}}">{{_('change password')}}</a></li>
                 <li><a href="{{url_for('accounts.logout')}}">{{_('logout')}}</a></li>
               </ul>

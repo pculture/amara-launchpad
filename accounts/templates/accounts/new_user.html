@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="user">
+  <h1 class="section-title">{{_('Create User')}}</h1>
+  <form id="login" method="POST">
+    <div class="control-group">
+      <input type="text" name="username" class="required" autofocus="true" placeholder="{{_('username')}}" value="{{username}}" />
+    </div>
+    <div class="control-group">
+      <input type="text" name="email" class="required" placeholder="{{_('email')}}" value="{{email}}" />
+    </div>
+    <div class="control-group">
+      <input type="password" name="password" class="required" placeholder="{{_('password')}}" />
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label class="control-label">
+        <input type="checkbox" name="admin">
+          {{_('Admin')}}
+        </label>
+      </div>
+    </div>
+    <div class="controls">
+      <input type="submit" class="btn btn-large btn-primary" value="{{_('Create')}}" />
+      <a href="{{url_for('admin.index')}}" class="btn btn-large">{{_('Cancel')}}</a>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  $("a#btn-submit").click(function(){
+    $("form#login").submit();
+  });
+  $(function(){
+    $("form#login").validate();
+  });
+</script>
+{% endblock %}
