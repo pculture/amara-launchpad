@@ -1,6 +1,6 @@
 body {
+  background: url('/static/img/bg.png');
   font-family: 'Dosis', sans-serif;
-  background-color: #efefef;
 }
 input, button {
   font-family: 'Dosis', sans-serif;
@@ -63,4 +63,14 @@ div.output {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   font-family: "Courier New";
+}
+div#modal-log {
+  width: 700px;
+  position: fixed;
+  left: 45%;
+  top: 50%;
+}
+div#log {
+  padding: 10px;
+  overflow: auto;
 }

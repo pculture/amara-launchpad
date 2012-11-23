@@ -19,6 +19,7 @@ APP_NAME = 'launchpad'
 APP_VERSION = '0.1'
 ADMIN_EMAIL = None
 FABRIC_PREFIX = '' # prefix for every fabric command
+LOG_DIR = '/tmp'
 LOG_LEVEL = logging.DEBUG
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 25

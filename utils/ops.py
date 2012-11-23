@@ -16,6 +16,7 @@ import config
 import subprocess
 import os
 import sys
+from flaskext.babel import gettext
 from utils import db
 
 def run_fabric_task(cmd=None, result_key=None):
@@ -24,6 +25,11 @@ def run_fabric_task(cmd=None, result_key=None):
     cmd_args = cmd.split()
     cmd_args.insert(0, 'fab')
     os.environ['PYTHONUNBUFFERED'] = 'true'
+    if result_key:
+        log_file = os.path.join(getattr(config, 'LOG_DIR'),
+            '{0}.log'.format(result_key))
+        os.environ['FABRIC_LOG'] = log_file
+    # run command
     p = subprocess.Popen(cmd_args, stdout=subprocess.PIPE)
     # only store results if requested
     if result_key:
@@ -31,3 +37,12 @@ def run_fabric_task(cmd=None, result_key=None):
             db.add_results(result_key, line)
     p.wait()
     return '{0} complete'.format(cmd)
+
+def get_fabric_log(result_key=None):
+    log_file = os.path.join(getattr(config, 'LOG_DIR'),
+        '{0}.log'.format(result_key))
+    try:
+        log = open(log_file, 'r').read()
+    except:
+        log = gettext('Unable to read log file.')
+    return log

@@ -12,15 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from flask import Blueprint, render_template, request, url_for, redirect, flash
+from flask import (Blueprint, render_template, request, url_for, redirect,
+    flash, session)
 from decorators import admin_required, login_required
-from utils import db, ops, queue_task, generate_api_response
+from utils import db, ops, queue_task, generate_json_response
 from ansi2html import Ansi2HTMLConverter
 import messages
 import time
 
 bp = admin_blueprint = Blueprint('admin', __name__,
     template_folder='templates')
+
+def _convert_ansi(text, full=False):
+    converted = ''
+    try:
+        conv = Ansi2HTMLConverter(markup_lines=True, linkify=True, escaped=False)
+        converted = conv.convert(text.replace('\n', ' <br/>'), full=full)
+    except Exception, e:
+        converted = text
+    return converted
 
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
@@ -33,6 +43,11 @@ def index():
         task = form.get('task')
         if task:
             result_key = str(int(time.time()))
+            db.log({
+                'ip': request.remote_addr,
+                'user': session.get('user', {}).get('username'),
+                'command': task
+            })
             # run command
             job = queue_task(ops.run_fabric_task, task, result_key)
     ctx = {
@@ -46,14 +61,17 @@ def index():
 @login_required
 def task_results(job_id=None, key=None):
     job_status = db.get_job_status(job_id)
-    conv = Ansi2HTMLConverter(markup_lines=True, escaped=False)
     res = db.get_results(key)
     if res:
-        res = conv.convert(res.replace('\n', ' <br/>'), full=False)
+        res = _convert_ansi(res)
     data = {
         'key': key,
         'results': res,
         'status': job_status,
     }
-    return generate_api_response(data)
+    return generate_json_response(data)
 
+@bp.route('/logs/<key>/')
+@admin_required
+def get_log(key=None):
+    return _convert_ansi(ops.get_fabric_log(key))

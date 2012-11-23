@@ -58,8 +58,8 @@ class CustomFile(file):
         self._record(s)
         return super(CustomFile, self).write(s, *args, **kwargs)
 
-
-_out_log = CustomFile('fabric.log', 'w')
+LOG_FILE = os.environ.get('FABRIC_LOG', 'fabric.log')
+_out_log = CustomFile(LOG_FILE, 'w')
 class Output(object):
     """A context manager for wrapping up standard output/error nicely.
 
@@ -1211,6 +1211,12 @@ def _create_solr_instance(name=None):
     os.remove('.temp-solr')
     # run puppet to create core
     _run_puppet_agent()
+    # configure dataDir
+    # <dataDir>
+    solr_config_xml = '/etc/solr/conf/{0}/conf/solrconfig.xml'.format(
+        name)
+    sudo("sed -i 's/<dataDir>.*/<dataDir>\/var\/lib\/solr\/data\/{0}\/<\/dataDir>/g' {1}".format(name,
+        solr_config_xml))
     # update schema
     _update_solr_schema()
 
@@ -1236,6 +1242,7 @@ def _remove_solr_instance(name=None):
         use_sudo=True)
     os.remove('.temp-solr')
     sudo('rm -rf /etc/solr/conf/{0}'.format(name))
+    sudo('rm -rf /var/lib/solr/data/{0}/'.format(name))
     # run puppet to remove core
     _run_puppet_agent()
     sudo('service tomcat6 restart')

@@ -6,10 +6,27 @@
 
 {% block content %}
 <div class="row-fluid">
-  <form id="run" method="POST">
+  {% if session.user.is_admin %}
+  <div id="modal-log" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">{{_('Log')}}</h3>
+    </div>
+    <div id="log" class="modal-body">
+      <div class="center"><img src="{{url_for('static', filename='img/loader_64.gif')}}"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">{{_('Close')}}</button>
+    </div>
+  </div>
+  <form id="run" class="form-search" method="POST">
     <input type="text" class="input-xxlarge search-query" name="task" placeholder="fabric task" autofocus="true" value="{{task}}" />
+    <button type="submit" class="btn">{{_('Run')}}</button>
+    {% if result_key %}
+    <a id="btn-log" href="#modal-log" role="button" class="btn hide" data-toggle="modal">{{_('Log')}}</a>
+    {% endif %}
   </form>
-
+  {% endif %}
   {% if result_key %}
   <div id="task-results" class="output"></div>
   {% endif %}
@@ -23,9 +40,16 @@
       $("div#task-results").html(data.results);
       if (data.status == 'finished') {
         clearInterval(resultInterval);
+        // show log button
+        $("a#btn-log").removeClass('hide');
       }
     });
   }
+  $("a#btn-log").click(function(){
+    $.get("{{url_for('admin.get_log', key=result_key)}}", function(data){
+      $("div#log").html(data);
+    });
+  });
   $(function(){
     resultInterval = setInterval(loadResults, 500);
   });

@@ -15,10 +15,12 @@
 import utils
 from utils import get_redis_connection
 from flask import json
+import time
 
 USER_KEY = 'users:{0}'
 RESULT_KEY = 'results:{0}'
 RQ_JOB_KEY = 'rq:job:{0}'
+LOG_KEY = 'logs'
 
 def create_user(username=None, password='', email=None, is_admin=False):
     """
@@ -119,6 +121,22 @@ def get_job_status(job_id=None):
     """
     Gets an RQ job status
 
+    :param job_id: Job ID
+
     """
     rds = get_redis_connection()
     return rds.hget(RQ_JOB_KEY.format(job_id), 'status')
+
+def log(data={}):
+    """
+    Logs item to DB
+
+    :param data: Log data as dict
+
+    """
+    if not isinstance(data, dict):
+        data = {'log': data}
+    data['date'] = int(time.time())
+    rds = get_redis_connection()
+    return rds.lpush(LOG_KEY, json.dumps(data))
+

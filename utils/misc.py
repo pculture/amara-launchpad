@@ -54,9 +54,9 @@ def hash_text(text):
     h.update(text)
     return h.hexdigest()
 
-def generate_api_response(data, status=200, content_type='application/json'):
+def generate_json_response(data, status=200, content_type='application/json'):
     """
-    `flask.Response` factory for api responses
+    `flask.Response` factory for JSON response
 
     :param data: Data that gets serialized to JSON
     :param status: Status code (default: 200)
