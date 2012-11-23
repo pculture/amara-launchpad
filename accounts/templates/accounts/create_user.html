@@ -3,7 +3,7 @@
 {% block content %}
 <div id="user">
   <h1 class="section-title">{{_('Create User')}}</h1>
-  <form id="login" method="POST">
+  <form id="user" method="POST">
     <div class="control-group">
       <input type="text" name="username" class="required" autofocus="true" placeholder="{{_('username')}}" value="{{username}}" />
     </div>
@@ -23,16 +23,16 @@
     </div>
     <div class="controls">
       <input type="submit" class="btn btn-large btn-primary" value="{{_('Create')}}" />
-      <a href="{{url_for('admin.index')}}" class="btn btn-large">{{_('Cancel')}}</a>
+      <a href="{{url_for('accounts.users')}}" class="btn btn-large">{{_('Cancel')}}</a>
     </div>
   </form>
 </div>
 <script type="text/javascript">
   $("a#btn-submit").click(function(){
-    $("form#login").submit();
+    $("form#user").submit();
   });
   $(function(){
-    $("form#login").validate();
+    $("form#user").validate();
   });
 </script>
 {% endblock %}

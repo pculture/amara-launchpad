@@ -22,6 +22,7 @@ from redis import Redis
 import hashlib
 import config
 from rq import Queue
+import operator
 
 def get_redis_connection():
     """
@@ -90,3 +91,5 @@ def send_mail(subject=None, text=None, to=[]):
     msg.body = text
     return mail.send(msg)
 
+def sorted_dict(data={}, key=''):
+    return sorted(data, key=operator.itemgetter(key))

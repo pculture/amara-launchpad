@@ -38,6 +38,16 @@ def login():
     ctx = {'username': username}
     return render_template('accounts/login.html', **ctx)
 
+@bp.route('/')
+@admin_required
+def users():
+    users = db.get_users()
+    users = utils.sorted_dict(users, 'username')
+    ctx = {
+        'users': users,
+    }
+    return render_template('accounts/users.html', **ctx)
+
 @bp.route('/create/', methods=['GET', 'POST'])
 @admin_required
 def create():
@@ -55,8 +65,8 @@ def create():
             flash(messages.USER_CREATED, 'success')
         else:
             flash(messages.EMPTY_USERNAME_EMAIL, 'error')
-        return redirect(url_for('admin.index'))
-    return render_template('accounts/new_user.html')
+        return redirect(url_for('accounts.users'))
+    return render_template('accounts/create_user.html')
 
 @bp.route('/delete')
 @bp.route('/delete/<username>')

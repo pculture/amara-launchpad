@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<link href="{{url_for('static', filename='css/admin.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="pull-right toolbar">
+    <a href="{{url_for('admin.create_workflow')}}" class="btn">{{_('Create Workflow')}}</a>
+  </div>
+  {% if workflows %}
+  <table class="table table-bordered table-hover">
+    <tr>
+      <th>{{_('Name')}}</th>
+      <th>{{_('Commands')}}</th>
+    </tr>
+    {% for w in workflows %}
+    <tr>
+      <td>{{w.name}}</td>
+      <td>{{w.commands}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <h2>{{_('There are no workflows.')}}</h2>
+  {% endif %}
+</div>
+
+<script type="text/javascript">
+</script>
+
+{% endblock %}

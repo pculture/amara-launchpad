@@ -39,7 +39,7 @@ hide {
   padding-top: 10px;
   padding-bottom: 5px;
 }
-div#login, div#signup, div#user {
+div#login, div#signup, div#user, div#workflow {
   color: #8a8a8a;
   text-align: center;
   margin: 70px 0 0 0;
@@ -73,4 +73,10 @@ div#modal-log {
 div#log {
   padding: 10px;
   overflow: auto;
+}
+div.toolbar {
+  margin: 0 0 20px 0;
+}
+input.workflow {
+  margin: 0 0 10px 0;
 }

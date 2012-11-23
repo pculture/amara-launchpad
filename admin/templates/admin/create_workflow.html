@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="workflow">
+  <h1 class="section-title">{{_('Create Workflow')}}</h1>
+  <form id="workflow" method="POST">
+    <div class="control-group">
+      <input type="text" name="name" class="required" autofocus="true" placeholder="{{_('name')}}" value="{{name}}" />
+    </div>
+    <div class="control-group">
+      <textarea rows="5" cols="60" name="commands" placeholder="{{_('semi-colon separated list of fabric commands (without the \'fab\' prefix')}}"></textarea>
+    </div>
+    <div class="controls">
+      <input type="submit" class="btn btn-large btn-primary" value="{{_('Create')}}" />
+      <a href="{{url_for('admin.index')}}" class="btn btn-large">{{_('Cancel')}}</a>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  $("a#btn-submit").click(function(){
+    $("form#workflow").submit();
+  });
+  $(function(){
+    $("form#workflow").validate();
+  });
+</script>
+{% endblock %}

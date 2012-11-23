@@ -21,6 +21,7 @@ USER_KEY = 'users:{0}'
 RESULT_KEY = 'results:{0}'
 RQ_JOB_KEY = 'rq:job:{0}'
 LOG_KEY = 'logs'
+WORKFLOW_KEY = 'workflows:{0}'
 
 def create_user(username=None, password='', email=None, is_admin=False):
     """
@@ -54,7 +55,7 @@ def get_user(username=None):
         data = json.loads(data)
     return data
 
-def get_all_users():
+def get_users():
     """
     Returns all users
 
@@ -139,4 +140,50 @@ def log(data={}):
     data['date'] = int(time.time())
     rds = get_redis_connection()
     return rds.lpush(LOG_KEY, json.dumps(data))
+
+def add_workflow(name=None, commands=None):
+    """
+    Adds a workflow
+
+    :param name: Name of workflow
+    :param commands: Commands as a string
+
+    """
+    rds = get_redis_connection()
+    data = {
+        'name': name,
+        'commands': commands,
+    }
+    return rds.set(WORKFLOW_KEY.format(name), json.dumps(data))
+
+def get_workflows():
+    """
+    Returns all workflows
+
+    """
+    rds = get_redis_connection()
+    workflows = []
+    workflow_keys = rds.keys(WORKFLOW_KEY.format('*'))
+    [workflows.append(json.loads(rds.get(x))) for x in workflow_keys]
+    return workflows
+
+def get_workflow(name=None):
+    """
+    Gets specified workflow
+
+    :param name: Workflow name
+
+    """
+    rds = get_redis_connection()
+    return json.loads(rds.get(WORKFLOW_KEY.format(name)))
+
+def delete_workflow(name=None):
+    """
+    Deletes a workflow
+
+    :param name: Name of workflow
+
+    """
+    rds = get_redis_connection()
+    return rds.delete(WORKFLOW_KEY.format(name))
 

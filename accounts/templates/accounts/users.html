@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<link href="{{url_for('static', filename='css/admin.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="pull-right toolbar">
+    <a href="{{url_for('accounts.create')}}" class="btn">{{_('Create User')}}</a>
+  </div>
+  {% if users %}
+  <table class="table table-bordered table-hover">
+    <tr>
+      <th>{{_('Name')}}</th>
+      <th>{{_('Email')}}</th>
+      <th>{{_('Admin')}}</th>
+    </tr>
+    {% for u in users %}
+    <tr>
+      <td>{{u.username}}</td>
+      <td>{{u.email}}</td>
+      <td>{{u.is_admin}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <h2>{{_('There are no users.')}}</h2>
+  {% endif %}
+</div>
+
+<script type="text/javascript">
+</script>
+
+{% endblock %}

@@ -6,12 +6,7 @@
 
 {% block content %}
 <div class="row-fluid">
-  <div class="pull-right toolbar">
-    {% if result_key %}
-    <a id="btn-log" href="#modal-log" role="button" class="btn btn-info hide" data-toggle="modal">{{_('Log')}}</a>
-    {% endif %}
-  </div>
-  {% if workflows %}
+  {% if session.user.is_admin %}
   <div id="modal-log" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -24,30 +19,24 @@
       <button class="btn" data-dismiss="modal" aria-hidden="true">{{_('Close')}}</button>
     </div>
   </div>
-  <form id="workflow" class="form-inline" method="POST">
-    <input id="workflow-id" type="hidden" name="workflow_id" />
-    {% for w in workflows %}
-    <input type="button" class="btn workflow" data-id="{{w.name}}" value="{{w.name}}"/>
-    {% endfor %}
+  <form id="run" class="form-search" method="POST">
+    <input type="text" class="input-xxlarge search-query" name="task" placeholder="fabric task" autofocus="true" value="{{task}}" />
+    <button type="submit" class="btn">{{_('Run')}}</button>
+    {% if result_key %}
+    <a id="btn-log" href="#modal-log" role="button" class="btn btn-info hide" data-toggle="modal">{{_('Log')}}</a>
+    {% endif %}
   </form>
-  <div id="task-results" class="output"></div>
-  {% else %}
-  <h2>{{_('There are no workflows.')}}</h2>
   {% endif %}
+  <div id="task-results" class="output"></div>
 </div>
 
 <script type="text/javascript">
-  $("input.workflow").click(function(){
-    var id = (this).getAttribute('data-id');
-    $("input#workflow-id").val(id);
-    $("form#workflow").submit();
-  });
   {% if result_key %}
   var resultInterval;
   function loadResults() {
     $.getJSON("{{url_for('admin.task_results', job_id=job.id, key=result_key)}}", function(data){
       $("div#task-results").html(data.results);
-      if (data.status == 'finished' || data.status == 'failed') {
+      if (data.status == 'finished') {
         clearInterval(resultInterval);
         // show log button
         $("a#btn-log").removeClass('hide');
