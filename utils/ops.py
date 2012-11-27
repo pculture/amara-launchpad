@@ -24,6 +24,10 @@ def run_fabric_task(cmd=None, result_key=None):
         raise ValueError('You must specify args')
     cmd_args = cmd.split()
     cmd_args.insert(0, 'fab')
+    # check for FABRIC_PREFIX
+    prefix = getattr(config, 'FABRIC_PREFIX', None)
+    if prefix:
+        cmd_args.insert(1, prefix)
     os.environ['PYTHONUNBUFFERED'] = 'true'
     if result_key:
         log_file = os.path.join(getattr(config, 'LOG_DIR'),

@@ -5,11 +5,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="row-fluid">
+<div class="row">
   <div class="pull-right toolbar">
-    {% if result_key %}
-    <a id="btn-log" href="#modal-log" role="button" class="btn btn-info hide" data-toggle="modal">{{_('Log')}}</a>
-    {% endif %}
+    <span class="{% if not result_key %}hide{% endif %}"><img id="loading" width="24" height="24" src="{{url_for('static', filename='img/loader_48.gif')}}" /></span>
   </div>
   {% if workflows %}
   <div id="modal-log" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
@@ -24,33 +22,69 @@
       <button class="btn" data-dismiss="modal" aria-hidden="true">{{_('Close')}}</button>
     </div>
   </div>
-  <form id="workflow" class="form-inline" method="POST">
-    <input id="workflow-id" type="hidden" name="workflow_id" />
+  <div class="span8">
+    <div id="task-results" class="output"></div>
+    {% if result_key %}
+    <div class="">
+    <a id="btn-log" href="#modal-log" class="hide" data-toggle="modal">{{_('View Log')}}</a>
+    </div>
+    {% endif %}
+  </div>
+  <div id="task-toolbar" class="span4">
+    <div id="workflows" class="accordion">
     {% for w in workflows %}
-    <input type="button" class="btn workflow" data-id="{{w.name}}" value="{{w.name}}"/>
+    {% if not w.admin or session.user.is_admin %}
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#workflows" href="#workflow-{{loop.index}}">{{w.name}}</a>
+        </div>
+        <div id="workflow-{{loop.index}}" class="accordion-body collapse{% if current_workflow == w.name %} in{% endif %}">
+          <div class="accordion-inner">
+            <form id="workflow" class="form" method="POST">
+              <input id="workflow-id" type="hidden" name="workflow_id" />
+              {% if w.args %}
+              {% for a in w.args.split(';') %}
+              <input type="text" class="workflow" name="{{a}}" placeholder="{{a}}" />
+              {% endfor %}
+              <div class="controls">
+                <input type="submit" class="btn workflow" data-id="{{w.name}}" value="{{_('Run')}}"/>
+              </div>
+              {% else %}
+              <input type="submit" class="btn workflow" data-id="{{w.name}}" value="{{_('Run')}}"/>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endif %}
     {% endfor %}
-  </form>
-  <div id="task-results" class="output"></div>
+    </div>
+  </div>
   {% else %}
   <h2>{{_('There are no workflows.')}}</h2>
   {% endif %}
 </div>
 
 <script type="text/javascript">
-  $("input.workflow").click(function(){
+  $("input.btn.workflow").click(function(){
     var id = (this).getAttribute('data-id');
     $("input#workflow-id").val(id);
-    $("form#workflow").submit();
   });
   {% if result_key %}
+  // disable tasks
+  $("input.workflow").prop('disabled', true);
   var resultInterval;
   function loadResults() {
     $.getJSON("{{url_for('admin.task_results', job_id=job.id, key=result_key)}}", function(data){
       $("div#task-results").html(data.results);
       if (data.status == 'finished' || data.status == 'failed') {
         clearInterval(resultInterval);
+        // hide loading
+        $("img#loading").addClass('hide');
         // show log button
         $("a#btn-log").removeClass('hide');
+        // enable tasks
+        $("input.workflow").prop('disabled', false);
       }
     });
   }

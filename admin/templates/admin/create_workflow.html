@@ -8,7 +8,21 @@
       <input type="text" name="name" class="required" autofocus="true" placeholder="{{_('name')}}" value="{{name}}" />
     </div>
     <div class="control-group">
-      <textarea rows="5" cols="60" name="commands" placeholder="{{_('semi-colon separated list of fabric commands (without the \'fab\' prefix')}}"></textarea>
+      <input type="text" name="category" class="required" placeholder="{{_('category')}}" value="{{category}}" />
+    </div>
+    <div class="control-group">
+      <input type="text" name="command" class="required" placeholder="{{_('fabric task (without the \'fab\' prefix)')}}" value="{{command}}" />
+    </div>
+    <div class="control-group">
+      <input type="text" name="args" placeholder="{{_('Task arguments (semi-colon separated)')}}" value="{{args}}" />
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label class="control-label">
+        <input type="checkbox" name="admin">
+          {{_('Admins Only')}}
+        </label>
+      </div>
     </div>
     <div class="controls">
       <input type="submit" class="btn btn-large btn-primary" value="{{_('Create')}}" />

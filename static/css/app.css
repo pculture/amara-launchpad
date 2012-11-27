@@ -51,10 +51,9 @@ label.error {
   color: #b20000
 }
 div.output {
-  min-height: 300px;
-  max-height: 450px;
+  height: 300px;
   overflow: auto;
-  margin: 15px auto 0 auto;
+  margin: 0 auto 5px auto;
   border: 1px solid #d5d5d5;
   background-color: #3a3a3a;
   color: #dedede;

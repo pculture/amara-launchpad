@@ -40,25 +40,33 @@ def index():
     workflows = db.get_workflows()
     job = None
     result_key = None
+    workflow_id = None
     workflows = db.get_workflows()
     workflows = utils.sorted_dict(workflows, 'name')
     if request.method == 'POST':
         form = request.form
         workflow_id = form.get('workflow_id')
         if workflow_id:
-            tasks = db.get_workflow(workflow_id).get('commands')
+            workflow = db.get_workflow(workflow_id)
             db.log({
                 'ip': request.remote_addr,
                 'user': session.get('user', {}).get('username'),
                 'command': 'Workflow: {0}'.format(workflow_id),
             })
-            # run each task
-            for task in tasks.split(';'):
-              result_key = str(int(time.time()))
-              # run command
-              job = queue_task(ops.run_fabric_task, task, result_key)
+            args = workflow.get('args')
+            # substitute args
+            task = workflow.get('command')
+            if args:
+                for a in args.split(';'):
+                    task = task.replace('<{0}>'.format(a), form.get(a))
+            print('Running task: {0}'.format(task))
+            # generate result_key
+            result_key = str(int(time.time()))
+            # run command
+            job = queue_task(ops.run_fabric_task, task, result_key)
     ctx = {
         'workflows': workflows,
+        'current_workflow': workflow_id,
         'job': job,
         'result_key': result_key,
     }
@@ -129,8 +137,13 @@ def create_workflow():
     if request.method == 'POST':
         form = request.form
         name = form.get('name')
-        commands = form.get('commands')
-        db.add_workflow(name, commands)
+        category = form.get('category')
+        command = form.get('command')
+        args = form.get('args')
+        admin = False
+        if form.has_key('admin'):
+            admin = True
+        db.add_workflow(name, category, command, args, admin)
         flash(gettext('Workflow created.'))
         return redirect(url_for('admin.workflows'))
     return render_template('admin/create_workflow.html', **ctx)

@@ -141,18 +141,25 @@ def log(data={}):
     rds = get_redis_connection()
     return rds.lpush(LOG_KEY, json.dumps(data))
 
-def add_workflow(name=None, commands=None):
+def add_workflow(name=None, category='default', command='',
+    args='', admin_only=False):
     """
     Adds a workflow
 
     :param name: Name of workflow
-    :param commands: Commands as a string
+    :param category: Workflow category
+    :param command: Command as a string
+    :param args: Task args (semi-colon separated string)
+    :param admin_only: Admin only workflow
 
     """
     rds = get_redis_connection()
     data = {
         'name': name,
-        'commands': commands,
+        'category': category,
+        'command': command,
+        'args': args,
+        'admin': admin_only,
     }
     return rds.set(WORKFLOW_KEY.format(name), json.dumps(data))
 

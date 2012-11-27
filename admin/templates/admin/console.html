@@ -22,6 +22,7 @@
   <form id="run" class="form-search" method="POST">
     <input type="text" class="input-xxlarge search-query" name="task" placeholder="fabric task" autofocus="true" value="{{task}}" />
     <button type="submit" class="btn">{{_('Run')}}</button>
+    <span class="{% if not result_key %}hide{% endif %}"><img id="loading" width="24" height="24" src="{{url_for('static', filename='img/loader_48.gif')}}" /></span>
     {% if result_key %}
     <a id="btn-log" href="#modal-log" role="button" class="btn btn-info hide" data-toggle="modal">{{_('Log')}}</a>
     {% endif %}
@@ -38,6 +39,8 @@
       $("div#task-results").html(data.results);
       if (data.status == 'finished') {
         clearInterval(resultInterval);
+        // hide loading
+        $("img#loading").addClass('hide');
         // show log button
         $("a#btn-log").removeClass('hide');
       }

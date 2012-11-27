@@ -12,13 +12,19 @@
   {% if workflows %}
   <table class="table table-bordered table-hover">
     <tr>
+      <th>{{_('Category')}}</th>
       <th>{{_('Name')}}</th>
-      <th>{{_('Commands')}}</th>
+      <th>{{_('Command')}}</th>
+      <th>{{_('Arguments')}}</th>
+      <th>{{_('Admin')}}</th>
     </tr>
     {% for w in workflows %}
     <tr>
+      <td>{{w.category}}</td>
       <td>{{w.name}}</td>
-      <td>{{w.commands}}</td>
+      <td>{{w.command}}</td>
+      <td>{{w.args}}</td>
+      <td>{{w.admin}}</td>
     </tr>
     {% endfor %}
   </table>
