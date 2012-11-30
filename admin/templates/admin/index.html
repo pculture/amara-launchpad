@@ -77,6 +77,7 @@
   function loadResults() {
     $.getJSON("{{url_for('admin.task_results', job_id=job.id, key=result_key)}}", function(data){
       $("div#task-results").html(data.results);
+      $("div#task-results").prop({ scrollTop: $("div#task-results").prop("scrollHeight") });
       if (data.status == 'finished' || data.status == 'failed') {
         clearInterval(resultInterval);
         // hide loading

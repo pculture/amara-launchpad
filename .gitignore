@@ -3,3 +3,4 @@
 *.log
 *.sw*
 local_config.py
+fabfile.py

@@ -28,13 +28,14 @@ def run_fabric_task(cmd=None, result_key=None):
     prefix = getattr(config, 'FABRIC_PREFIX', None)
     if prefix:
         cmd_args.insert(1, prefix)
-    os.environ['PYTHONUNBUFFERED'] = 'true'
+    env = os.environ.copy()
+    env['PYTHONUNBUFFERED'] = 'true'
     if result_key:
         log_file = os.path.join(getattr(config, 'LOG_DIR'),
             '{0}.log'.format(result_key))
-        os.environ['FABRIC_LOG'] = log_file
+        env['FABRIC_LOG'] = log_file
     # run command
-    p = subprocess.Popen(cmd_args, stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd_args, stdout=subprocess.PIPE, env=env)
     # only store results if requested
     if result_key:
         for line in iter(p.stdout.readline, ''):
