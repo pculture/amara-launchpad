@@ -1,7 +1,9 @@
 # Amara Launchpad
 Application for running Fabric workflows
 
-# Setup (you must have Redis running)
+# Setup
+
+* Make sure you have Redis (this assumes you have it running locally -- otherwise edit `config.py`)
 
 * mkvirtualenv launchpad
 * pip install -r requirements.txt
