@@ -14,6 +14,7 @@
 # limitations under the License.
 from flask import Flask
 import logging
+from utils import amara
 
 APP_NAME = 'launchpad'
 APP_VERSION = '0.1'
@@ -34,6 +35,11 @@ REDIS_DB = 0
 REDIS_PASSWORD = None
 RESULT_TTL = 86400 # task result TTL
 SECRET_KEY = '1q2w3e4r5t6y7u8i9o0p'
+# cache
+CACHE_TYPE = 'redis'
+CACHE_REDIS_HOST = REDIS_HOST
+CACHE_REDIS_PORT = REDIS_PORT
+CACHE_REDIS_PASSWORD = REDIS_PASSWORD
 # local config
 try:
     from local_config import *
@@ -51,3 +57,115 @@ def create_app():
     app.config.from_object('config')
     return app
 
+# workflows
+# these are pre-configured workflows that allow non-admin users to run tasks
+# with specific arguments
+# wrapped in a function so the 'data' loaders are called each time
+
+def get_workflows():
+    branches = amara.get_repo_branches()
+    branches.sort()
+    return (
+        {
+            'name': 'Show Demos',
+            'category': 'Demo',
+            'command': 'demo:amara show_demos',
+            'arguments': [],
+        },
+        {
+            'name': 'Create Demo',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> create_demo:url_prefix=<url>',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': None,
+                },
+                {
+                    'name': 'url',
+                    'data': None,
+                }
+            ]
+        },
+        {
+            'name': 'Create Demo from Branch',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> create_demo:url_prefix=<url>',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                },
+                {
+                    'name': 'url',
+                    'data': None,
+                }
+            ]
+        },
+        {
+            'name': 'Delete Demo by Branch',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> remove_demo',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ],
+        },
+        {
+            'name': 'Delete Demo',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> remove_demo',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': None,
+                }
+            ],
+        },
+        {
+            'name': 'Update Demo by Branch',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> deploy',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ],
+        },
+        {
+            'name': 'Update Environment by Branch',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> update_environment',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ],
+        },
+        {
+            'name': 'Update Demo',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> deploy',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': None,
+                }
+            ],
+        },
+        {
+            'name': 'Test Services',
+            'category': 'Test',
+            'command': '<environment>:amara test_services',
+            'arguments': [
+                {
+                    'name': 'environment',
+                    'data': None,
+                }
+            ],
+        }
+    )

@@ -13,14 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from flask import (Blueprint, render_template, request, url_for, redirect,
-    flash, session)
+    flash, session, current_app)
 from flaskext.babel import gettext
 from decorators import admin_required, login_required
 import utils
+import config
 from utils import db, ops, queue_task, generate_json_response
 from ansi2html import Ansi2HTMLConverter
 import messages
 import time
+from cache import cache
 
 bp = admin_blueprint = Blueprint('admin', __name__,
     template_folder='templates')
@@ -37,36 +39,36 @@ def _convert_ansi(text, full=False):
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    workflows = db.get_workflows()
+    workflows = config.get_workflows()
     job = None
     result_key = None
     workflow_id = None
-    workflows = db.get_workflows()
     workflows = utils.sorted_dict(workflows, 'name')
     if request.method == 'POST':
         form = request.form
         workflow_id = form.get('workflow_id')
         if workflow_id:
-            workflow = db.get_workflow(workflow_id)
+            workflow = [x for x in workflows if x.get('name') == workflow_id][0]
             db.log({
                 'ip': request.remote_addr,
                 'user': session.get('user', {}).get('username'),
                 'command': 'Workflow: {0}'.format(workflow_id),
             })
-            args = workflow.get('args')
+            args = workflow.get('arguments')
             # substitute args
             task = workflow.get('command')
             if args:
-                for a in args.split(';'):
-                    task = task.replace('<{0}>'.format(a), form.get(a))
-            print('Running task: {0}'.format(task))
+                for a in args:
+                    arg_name = a.get('name')
+                    arg_val = form.get(arg_name, None)
+                    task = task.replace('<{0}>'.format(arg_name),
+                        form.get(arg_name))
             # generate result_key
             result_key = str(int(time.time()))
             # run command
             job = queue_task(ops.run_fabric_task, task, result_key)
     ctx = {
         'workflows': workflows,
-        'current_workflow': workflow_id,
         'job': job,
         'result_key': result_key,
     }
@@ -121,29 +123,3 @@ def task_results(job_id=None, key=None):
 def get_log(key=None):
     return _convert_ansi(ops.get_fabric_log(key))
 
-@bp.route('/workflows/', methods=['GET', 'POST'])
-@admin_required
-def workflows():
-    workflows = db.get_workflows()
-    ctx = {
-        'workflows': workflows,
-    }
-    return render_template('admin/workflows.html', **ctx)
-
-@bp.route('/workflows/create/', methods=['GET', 'POST'])
-@admin_required
-def create_workflow():
-    ctx = {}
-    if request.method == 'POST':
-        form = request.form
-        name = form.get('name')
-        category = form.get('category')
-        command = form.get('command')
-        args = form.get('args')
-        admin = False
-        if form.has_key('admin'):
-            admin = True
-        db.add_workflow(name, category, command, args, admin)
-        flash(gettext('Workflow created.'))
-        return redirect(url_for('admin.workflows'))
-    return render_template('admin/create_workflow.html', **ctx)

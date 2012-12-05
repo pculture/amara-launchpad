@@ -12,14 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from flask import redirect, url_for, render_template, request, flash, session
+from flask import (redirect, url_for, render_template, request, flash, session,
+    json)
 from flask.ext import redis
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 import config
 import messages
 import utils
-from utils import db, accounts
+import time
+from utils import db, accounts, queue_task, ops
 from accounts.views import accounts_blueprint
 from admin.views import admin_blueprint
 
@@ -43,6 +45,27 @@ if not db.get_user('admin'):
 @app.route('/')
 def index():
     return redirect(url_for('admin.index'))
+
+#github post receive hook
+@app.route('/github', methods=['POST'])
+def github_hook():
+    data = json.loads(request.form.get('payload', ''))
+    # make sure this came from unisubs
+    repo = data.get('repository', {})
+    if repo.get('name') == 'unisubs' and \
+        repo.get('url') == 'https://github.com/pculture/unisubs':
+        # get the branch
+        branch = data.get('ref').split('refs/heads/')[-1]
+        result_key = str(int(time.time()))
+        db.log({
+            'ip': request.remote_addr,
+            'user': 'github',
+            'command': 'Hook: deploy for {0}'.format(branch),
+        })
+        task = 'demo:amara,{0} deploy'.format(branch)
+        print('Running {0}'.format(task))
+        job = queue_task(ops.run_fabric_task, task, result_key)
+    return 'kthxbye'
 
 if __name__=='__main__':
     from optparse import OptionParser

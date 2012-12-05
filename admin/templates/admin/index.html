@@ -38,13 +38,21 @@
         <div class="accordion-heading">
           <a class="accordion-toggle" data-toggle="collapse" data-parent="#workflows" href="#workflow-{{loop.index}}">{{w.name}}</a>
         </div>
-        <div id="workflow-{{loop.index}}" class="accordion-body collapse{% if current_workflow == w.name %} in{% endif %}">
+        <div id="workflow-{{loop.index}}" class="accordion-body collapse">
           <div class="accordion-inner">
             <form id="workflow" class="form" method="POST">
               <input id="workflow-id" type="hidden" name="workflow_id" />
-              {% if w.args %}
-              {% for a in w.args.split(';') %}
-              <input type="text" class="workflow" name="{{a}}" placeholder="{{a}}" />
+              {% if w.arguments %}
+              {% for a in w.arguments %}
+              {% if a.data is iterable %}
+              <select name="{{a.name}}">
+                {% for v in a.data %}
+                <option value="{{v}}">{{v}}</option>
+                {% endfor %}
+              </select>
+              {% else %}
+              <input type="text" class="workflow" name="{{a.name}}" placeholder="{{a.name}}" />
+              {% endif %}
               {% endfor %}
               <div class="controls">
                 <input type="submit" class="btn workflow" data-id="{{w.name}}" value="{{_('Run')}}"/>
