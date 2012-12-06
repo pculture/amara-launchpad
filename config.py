@@ -136,7 +136,7 @@ def get_workflows():
             ],
         },
         {
-            'name': 'Update Environment by Branch',
+            'name': 'Update Virtualenv by Branch',
             'category': 'Demo',
             'command': 'demo:amara,<revision> update_environment',
             'arguments': [
