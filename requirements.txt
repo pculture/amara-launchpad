@@ -12,6 +12,7 @@ blinker==1.2
 pycrypto==2.6
 pytz==2012f
 redis==2.7.1
+requests==0.14.2
 rq==0.3.2
 simplejson==2.6.2
 speaklater==1.3
