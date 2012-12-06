@@ -158,6 +158,17 @@ def get_workflows():
             ],
         },
         {
+            'name': 'Deploy',
+            'category': 'Admin',
+            'command': '<environment>:amara deploy',
+            'arguments': [
+                {
+                    'name': 'environment',
+                    'data': None,
+                }
+            ],
+        },
+        {
             'name': 'Test Services',
             'category': 'Test',
             'command': '<environment>:amara test_services',
