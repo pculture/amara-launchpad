@@ -17,6 +17,7 @@ from flask import (redirect, url_for, render_template, request, flash, session,
 from flask.ext import redis
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
+from rq_dashboard import RQDashboard
 import config
 import messages
 import utils
@@ -35,12 +36,20 @@ redis = redis.init_redis(app)
 app.config['babel'] = babel
 app.config['mail'] = mail
 app.config['redis'] = redis
+RQDashboard(app)
 
 # check for admin user ; create if missing
 if not db.get_user('admin'):
     print('Creating admin user; password: launchpad')
     db.create_user(username='admin', password='launchpad',
         email=config.ADMIN_EMAIL, is_admin=True)
+
+# hack to add auth for rq dashboard
+@app.before_request
+def rq_auth_check():
+    print(request.path)
+    if request.path.find('/rq') > -1 and not session.get('user'):
+        return redirect(url_for('accounts.login'))
 
 @app.route('/')
 def index():
