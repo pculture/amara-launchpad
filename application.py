@@ -47,7 +47,6 @@ if not db.get_user('admin'):
 # hack to add auth for rq dashboard
 @app.before_request
 def rq_auth_check():
-    print(request.path)
     if request.path.find('/rq') > -1 and not session.get('user'):
         return redirect(url_for('accounts.login'))
 
