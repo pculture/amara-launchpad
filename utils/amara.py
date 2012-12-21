@@ -21,13 +21,14 @@ except ImportError:
 def get_repo_branches():
     # get repo branches from github
     branch_url = 'https://api.github.com/repos/pculture/unisubs/branches'
+    ignored_branches = ['dev', 'staging', 'production']
     resp = requests.get(branch_url)
     branches = []
     if resp.status_code == 200:
         try:
             data = json.loads(resp.content)
             [branches.append(x.get('name')) for x in data \
-                if x.get('name').startswith('x-')]
+                if x.get('name') not in ignored_branches]
         except Exception, e:
             print('Unable to parse Github branch data: {0}'.format(e))
     return branches
