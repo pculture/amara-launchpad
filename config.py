@@ -67,6 +67,28 @@ def get_workflows():
     branches.sort()
     return (
         {
+            'name': 'Activate Integration Link',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> activate_integration_link',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': None,
+                }
+            ]
+        },
+        {
+            'name': 'Activate Integration Link from Branch',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> activate_integration_link',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ]
+        },
+        {
             'name': 'Show Demos',
             'category': 'Demo',
             'command': 'demo:amara show_demos',
