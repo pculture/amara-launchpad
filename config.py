@@ -67,7 +67,7 @@ def get_workflows():
     branches.sort()
     return (
         {
-            'name': 'Activate Integration Link from Branch',
+            'name': 'Activate Integration Link',
             'category': 'Demo',
             'command': 'demo:amara,<revision> activate_integration_link',
             'arguments': [
@@ -78,7 +78,7 @@ def get_workflows():
             ]
         },
         {
-            'name': 'Remove Integration Link from Branch',
+            'name': 'Remove Integration Link',
             'category': 'Demo',
             'command': 'demo:amara,<revision> remove_integration_link',
             'arguments': [
