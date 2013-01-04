@@ -69,7 +69,7 @@ def get_workflows():
         {
             'name': 'Activate Integration Link',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> activate_integration_link',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> activate_integration_link',
             'arguments': [
                 {
                     'name': 'revision',
@@ -80,7 +80,7 @@ def get_workflows():
         {
             'name': 'Remove Integration Link',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> remove_integration_link',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> remove_integration_link',
             'arguments': [
                 {
                     'name': 'revision',
@@ -97,7 +97,7 @@ def get_workflows():
         {
             'name': 'Create Demo',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> create_demo:url_prefix=<url>',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> create_demo:url_prefix=<url>',
             'arguments': [
                 {
                     'name': 'revision',
@@ -112,7 +112,7 @@ def get_workflows():
         {
             'name': 'Create Demo from Branch',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> create_demo:url_prefix=<url>',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> create_demo:url_prefix=<url>',
             'arguments': [
                 {
                     'name': 'revision',
@@ -127,7 +127,7 @@ def get_workflows():
         {
             'name': 'Delete Demo by Branch',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> remove_demo',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> remove_demo',
             'arguments': [
                 {
                     'name': 'revision',
@@ -138,7 +138,7 @@ def get_workflows():
         {
             'name': 'Delete Demo',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> remove_demo',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> remove_demo',
             'arguments': [
                 {
                     'name': 'revision',
@@ -149,7 +149,7 @@ def get_workflows():
         {
             'name': 'Update Demo by Branch',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> deploy',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> deploy',
             'arguments': [
                 {
                     'name': 'revision',
@@ -160,7 +160,7 @@ def get_workflows():
         {
             'name': 'Update Virtualenv by Branch',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> update_environment',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> update_environment',
             'arguments': [
                 {
                     'name': 'revision',
@@ -171,7 +171,7 @@ def get_workflows():
         {
             'name': 'Update Demo',
             'category': 'Demo',
-            'command': 'demo:amara,<revision> deploy',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> deploy',
             'arguments': [
                 {
                     'name': 'revision',
@@ -182,7 +182,7 @@ def get_workflows():
         {
             'name': 'Deploy',
             'category': 'Admin',
-            'command': '<environment>:amara deploy',
+            'command': '<environment>:amara proxy_user:<proxy_user> deploy',
             'arguments': [
                 {
                     'name': 'environment',

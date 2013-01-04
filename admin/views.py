@@ -49,9 +49,10 @@ def index():
         workflow_id = form.get('workflow_id')
         if workflow_id:
             workflow = [x for x in workflows if x.get('name') == workflow_id][0]
+            username = session.get('user', {}).get('username')
             db.log({
                 'ip': request.remote_addr,
-                'user': session.get('user', {}).get('username'),
+                'user': username,
                 'command': 'Workflow: {0}'.format(workflow_id),
             })
             args = workflow.get('arguments')
@@ -63,6 +64,8 @@ def index():
                     arg_val = form.get(arg_name, None)
                     task = task.replace('<{0}>'.format(arg_name),
                         form.get(arg_name))
+            # add proxy_user to get launchpad user
+            task = task.replace('<proxy_user>', username)
             # generate result_key
             result_key = str(int(time.time()))
             # run command
