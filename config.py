@@ -121,6 +121,10 @@ def get_workflows():
                 {
                     'name': 'url',
                     'data': None,
+                },
+                {
+                    'name': 'copy test data',
+                    'data': ('True', 'False'),
                 }
             ]
         },

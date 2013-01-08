@@ -44,15 +44,18 @@
               <input id="workflow-id" type="hidden" name="workflow_id" />
               {% if w.arguments %}
               {% for a in w.arguments %}
+              <div>
               {% if a.data is iterable %}
               <select name="{{a.name}}">
                 {% for v in a.data %}
                 <option value="{{v}}">{{v}}</option>
                 {% endfor %}
               </select>
+              <span class="help muted"><em>{{a.name}}</em></span>
               {% else %}
               <input type="text" class="workflow" name="{{a.name}}" placeholder="{{a.name}}" />
               {% endif %}
+              </div>
               {% endfor %}
               <div class="controls">
                 <input type="submit" class="btn workflow" data-id="{{w.name}}" value="{{_('Run')}}"/>

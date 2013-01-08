@@ -79,3 +79,6 @@ div.toolbar {
 input.workflow {
   margin: 0 0 10px 0;
 }
+span.help {
+  margin: 0 0 0 5px;
+}
