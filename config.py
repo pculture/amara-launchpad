@@ -173,6 +173,25 @@ def get_workflows():
             ],
         },
         {
+            'name': 'Change Demo User Password',
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> reset_demo_user_password:<username>,<password>',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                },
+                {
+                    'name': 'username',
+                    'data': None,
+                },
+                {
+                    'name': 'password',
+                    'data': None,
+                }
+            ],
+        },
+        {
             'name': 'Update Demo',
             'category': 'Demo',
             'command': 'demo:amara,<revision> proxy_user:<proxy_user> deploy',
