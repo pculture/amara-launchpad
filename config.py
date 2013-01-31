@@ -211,7 +211,7 @@ def get_workflows():
             ],
         },
         {
-            'name': 'Update Demo',
+            'name': 'Deploy Demo',
             'notify': True,
             'category': 'Demo',
             'command': 'demo:amara,<revision> proxy_user:<proxy_user> deploy',
