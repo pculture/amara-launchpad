@@ -95,7 +95,7 @@ def console():
                 'command': task
             })
             # run command
-            job = queue_task(ops.run_fabric_task, task, result_key)
+            job = queue_task(ops.run_fabric_task, task, result_key, False)
     ctx = {
         'task': task,
         'job': job,
