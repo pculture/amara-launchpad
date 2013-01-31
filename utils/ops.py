@@ -17,9 +17,10 @@ import subprocess
 import os
 import sys
 from flaskext.babel import gettext
-from utils import db, notify
+from utils import db
+from utils.notify import publish
 
-def run_fabric_task(cmd=None, result_key=None):
+def run_fabric_task(cmd=None, result_key=None, notify=True):
     if not cmd:
         raise ValueError('You must specify args')
     cmd_args = cmd.split()
@@ -42,8 +43,8 @@ def run_fabric_task(cmd=None, result_key=None):
             db.add_results(result_key, line)
     p.wait()
     # notify via irc
-    if getattr(config, 'IRC_ENABLED'):
-        notify.publish('Task complete: {0}'.format(cmd))
+    if notify and getattr(config, 'IRC_ENABLED'):
+        publish('Task complete: {0}'.format(cmd))
     return '{0} complete'.format(cmd)
 
 def get_fabric_log(result_key=None):

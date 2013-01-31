@@ -69,7 +69,8 @@ def index():
             # generate result_key
             result_key = str(int(time.time()))
             # run command
-            job = queue_task(ops.run_fabric_task, task, result_key)
+            job = queue_task(ops.run_fabric_task, task, result_key,
+                workflow.get('notify'))
     ctx = {
         'workflows': workflows,
         'job': job,
