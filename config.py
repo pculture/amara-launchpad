@@ -20,6 +20,15 @@ APP_NAME = 'launchpad'
 APP_VERSION = '0.1'
 ADMIN_EMAIL = None
 FABRIC_PREFIX = '' # prefix for every fabric command (no spaces between options)
+
+IRC_ENABLED = False
+IRC_CHANNEL = None
+IRC_HOST = 'irc.freenode.net'
+IRC_PORT = 6667
+IRC_NICK = 'launchpad-bot'
+IRC_CHANNELS = ()
+REDIS_PUBSUB_CHANNEL = 'launchpad'
+
 LOG_DIR = '/tmp'
 LOG_LEVEL = logging.DEBUG
 MAIL_SERVER = 'localhost'
@@ -151,7 +160,7 @@ def get_workflows():
             ],
         },
         {
-            'name': 'Update Demo by Branch',
+            'name': 'Deploy Demo by Branch',
             'category': 'Demo',
             'command': 'demo:amara,<revision> proxy_user:<proxy_user> deploy',
             'arguments': [
