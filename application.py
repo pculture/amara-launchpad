@@ -70,9 +70,12 @@ def github_hook():
             'user': 'github',
             'command': 'Hook: deploy for {0}'.format(branch),
         })
-        task = 'demo:amara,{0} deploy'.format(branch)
-        print('Running {0}'.format(task))
-        job = queue_task(ops.run_fabric_task, task, result_key)
+        # don't deploy these branches
+        ignored_branches = ['dev', 'staging', 'production']
+        if branch not in ignored_branches:
+            task = 'demo:amara,{0} deploy'.format(branch)
+            print('Running {0}'.format(task))
+            job = queue_task(ops.run_fabric_task, task, result_key)
     return 'kthxbye'
 
 if __name__=='__main__':
