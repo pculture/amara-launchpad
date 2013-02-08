@@ -25,6 +25,7 @@ import time
 from utils import db, accounts, queue_task, ops
 from accounts.views import accounts_blueprint
 from admin.views import admin_blueprint
+from multiprocessing import Process
 
 app = config.create_app()
 app.register_blueprint(accounts_blueprint, url_prefix='/accounts')
@@ -64,19 +65,32 @@ def github_hook():
         repo.get('url') == 'https://github.com/pculture/unisubs':
         # get the branch
         branch = data.get('ref').split('refs/heads/')[-1]
-        result_key = str(int(time.time()))
         db.log({
             'ip': request.remote_addr,
             'user': 'github',
             'command': 'Hook: deploy for {0}'.format(branch),
         })
-        # don't deploy these branches
-        ignored_branches = ['dev', 'staging', 'production']
-        if branch not in ignored_branches:
-            task = 'demo:amara,{0} deploy'.format(branch)
-            print('Running {0}'.format(task))
-            job = queue_task(ops.run_fabric_task, task, result_key)
+        # spawn process to not delay the response to github
+        p = Process(target=deploy_demo, args=(branch,))
+        p.start()
     return 'kthxbye'
+
+def deploy_demo(branch=None):
+    """
+    Runs the demo task for the specified branch
+    """
+    result_key = str(int(time.time()))
+    # don't deploy these branches
+    ignored_branches = ['dev', 'staging', 'production']
+    # hack to check to make sure a demo of that branch exists
+    hook_key = 'github'
+    ops.run_fabric_task('demo:amara show_demos',
+        result_key=hook_key)
+    demos = ops.get_fabric_log(hook_key)
+    demo_name = branch.replace('-', '_')
+    if branch not in ignored_branches and demos.find(demo_name) != -1:
+        task = 'demo:amara,{0} deploy'.format(branch)
+        job = queue_task(ops.run_fabric_task, task, result_key)
 
 if __name__=='__main__':
     from optparse import OptionParser
