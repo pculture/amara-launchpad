@@ -85,7 +85,7 @@ def deploy_demo(branch=None):
     # hack to check to make sure a demo of that branch exists
     hook_key = 'github'
     ops.run_fabric_task('demo:amara show_demos',
-        result_key=hook_key)
+        result_key=hook_key, notify=False)
     demos = ops.get_fabric_log(hook_key)
     demo_name = branch.replace('-', '_')
     if branch not in ignored_branches and demos.find(demo_name) != -1:
