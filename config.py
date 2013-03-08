@@ -191,6 +191,44 @@ def get_workflows():
             ],
         },
         {
+            'name': 'Start Demo',
+            'notify': False,
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> start_demo',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ]
+        },
+        {
+            'name': 'Stop Demo',
+            'notify': False,
+            'category': 'Demo',
+            'command': 'demo:amara,<revision> proxy_user:<proxy_user> stop_demo',
+            'arguments': [
+                {
+                    'name': 'revision',
+                    'data': branches,
+                }
+            ]
+        },
+        {
+            'name': 'Start All Demos',
+            'notify': False,
+            'category': 'Demo',
+            'command': 'demo:amara proxy_user:<proxy_user> start_all_demos',
+            'arguments': [],
+        },
+        {
+            'name': 'Stop All Demos',
+            'notify': False,
+            'category': 'Demo',
+            'command': 'demo:amara proxy_user:<proxy_user> stop_all_demos',
+            'arguments': [],
+        },
+        {
             'name': 'Change Demo User Password',
             'notify': False,
             'category': 'Demo',
